@@ -4,3 +4,6 @@
 [submodule "vendor_qcom_opensource_wlan_prima"]
 	path = drivers/staging/prima
 	url = https://github.com/Mi-Thorium/vendor_qcom_opensource_wlan_prima
+[submodule "kernel_techpack_xiaomi-titanium"]
+	path = techpack/xiaomi-titanium
+	url = https://github.com/imren0x/kernel_techpack_xiaomi-titanium
