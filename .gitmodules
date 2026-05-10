@@ -1,0 +1,3 @@
+[submodule "kernel_devicetree_msm-4.19"]
+	path = arch/arm64/boot/dts/vendor-legacy
+	url = https://github.com/imren0x/kernel_devicetree_msm-4.19
