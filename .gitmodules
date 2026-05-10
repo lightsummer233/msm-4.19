@@ -10,3 +10,6 @@
 [submodule "kernel_techpack_audio-legacy"]
 	path = techpack/audio-legacy
 	url = https://github.com/lightsummer233/kernel_techpack_audio-legacy
+[submodule "KernelSU"]
+	path = KernelSU
+	url = https://github.com/lightsummer233/KernelSU.git
