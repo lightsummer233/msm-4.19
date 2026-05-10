@@ -1,3 +1,6 @@
 [submodule "kernel_devicetree_msm-4.19"]
 	path = arch/arm64/boot/dts/vendor-legacy
 	url = https://github.com/imren0x/kernel_devicetree_msm-4.19
+[submodule "vendor_qcom_opensource_wlan_prima"]
+	path = drivers/staging/prima
+	url = https://github.com/Mi-Thorium/vendor_qcom_opensource_wlan_prima
