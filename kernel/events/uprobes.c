@@ -59,7 +59,7 @@ static DEFINE_SPINLOCK(uprobes_treelock);	/* serialize rbtree access */
 static struct mutex uprobes_mmap_mutex[UPROBES_HASH_SZ];
 #define uprobes_mmap_hash(v)	(&uprobes_mmap_mutex[((unsigned long)(v)) % UPROBES_HASH_SZ])
 
-static struct percpu_rw_semaphore dup_mmap_sem;
+static struct percpu_rw_semaphore dup_mmap_lock;
 
 /* Have a copy of original instruction */
 #define UPROBE_COPY_INSN	0
@@ -297,7 +297,7 @@ static int verify_opcode(struct page *page, unsigned long vaddr, uprobe_opcode_t
  * @vaddr: the virtual address to store the opcode.
  * @opcode: opcode to be written at @vaddr.
  *
- * Called with mm->mmap_sem held for write.
+ * Called with mm->mmap_lock held for write.
  * Return 0 (success) or a negative errno.
  */
 int uprobe_write_opcode(struct arch_uprobe *auprobe, struct mm_struct *mm,
@@ -791,7 +791,7 @@ register_for_each_vma(struct uprobe *uprobe, struct uprobe_consumer *new)
 	struct map_info *info;
 	int err = 0;
 
-	percpu_down_write(&dup_mmap_sem);
+	percpu_down_write(&dup_mmap_lock);
 	info = build_map_info(uprobe->inode->i_mapping,
 					uprobe->offset, is_register);
 	if (IS_ERR(info)) {
@@ -834,7 +834,7 @@ register_for_each_vma(struct uprobe *uprobe, struct uprobe_consumer *new)
 		info = free_map_info(info);
 	}
  out:
-	percpu_up_write(&dup_mmap_sem);
+	percpu_up_write(&dup_mmap_lock);
 	return err;
 }
 
@@ -1065,7 +1065,7 @@ static void build_probe_list(struct inode *inode,
 }
 
 /*
- * Called from mmap_region/vma_adjust with mm->mmap_sem acquired.
+ * Called from mmap_region/vma_adjust with mm->mmap_lock acquired.
  *
  * Currently we ignore all errors and always return 0, the callers
  * can't handle the failure anyway.
@@ -1259,12 +1259,12 @@ void uprobe_clear_state(struct mm_struct *mm)
 
 void uprobe_start_dup_mmap(void)
 {
-	percpu_down_read(&dup_mmap_sem);
+	percpu_down_read(&dup_mmap_lock);
 }
 
 void uprobe_end_dup_mmap(void)
 {
-	percpu_up_read(&dup_mmap_sem);
+	percpu_up_read(&dup_mmap_lock);
 }
 
 void uprobe_dup_mmap(struct mm_struct *oldmm, struct mm_struct *newmm)
@@ -2061,7 +2061,7 @@ static int __init init_uprobes(void)
 	for (i = 0; i < UPROBES_HASH_SZ; i++)
 		mutex_init(&uprobes_mmap_mutex[i]);
 
-	if (percpu_init_rwsem(&dup_mmap_sem))
+	if (percpu_init_rwsem(&dup_mmap_lock))
 		return -ENOMEM;
 
 	return register_die_notifier(&uprobe_exception_nb);

@@ -246,8 +246,8 @@ void __mmu_notifier_invalidate_range(struct mm_struct *mm,
 EXPORT_SYMBOL_GPL(__mmu_notifier_invalidate_range);
 
 /*
- * Must be called while holding mm->mmap_sem for either read or write.
- * The result is guaranteed to be valid until mm->mmap_sem is dropped.
+ * Must be called while holding mm->mmap_lock for either read or write.
+ * The result is guaranteed to be valid until mm->mmap_lock is dropped.
  */
 bool mm_has_blockable_invalidate_notifiers(struct mm_struct *mm)
 {
@@ -278,7 +278,7 @@ bool mm_has_blockable_invalidate_notifiers(struct mm_struct *mm)
 
 static int do_mmu_notifier_register(struct mmu_notifier *mn,
 				    struct mm_struct *mm,
-				    int take_mmap_sem)
+				    int take_mmap_lock)
 {
 	struct mmu_notifier_mm *mmu_notifier_mm;
 	int ret;
@@ -290,7 +290,7 @@ static int do_mmu_notifier_register(struct mmu_notifier *mn,
 	if (unlikely(!mmu_notifier_mm))
 		goto out;
 
-	if (take_mmap_sem)
+	if (take_mmap_lock)
 		mmap_write_lock(mm);
 	ret = mm_take_all_locks(mm);
 	if (unlikely(ret))
@@ -319,7 +319,7 @@ static int do_mmu_notifier_register(struct mmu_notifier *mn,
 
 	mm_drop_all_locks(mm);
 out_clean:
-	if (take_mmap_sem)
+	if (take_mmap_lock)
 		mmap_write_unlock(mm);
 	kfree(mmu_notifier_mm);
 out:
@@ -328,7 +328,7 @@ out:
 }
 
 /*
- * Must not hold mmap_sem nor any other VM related lock when calling
+ * Must not hold mmap_lock nor any other VM related lock when calling
  * this registration function. Must also ensure mm_users can't go down
  * to zero while this runs to avoid races with mmu_notifier_release,
  * so mm has to be current->mm or the mm should be pinned safely such
@@ -348,7 +348,7 @@ EXPORT_SYMBOL_GPL(mmu_notifier_register);
 
 /*
  * Same as mmu_notifier_register but here the caller must hold the
- * mmap_sem in write mode.
+ * mmap_lock in write mode.
  */
 int __mmu_notifier_register(struct mmu_notifier *mn, struct mm_struct *mm)
 {
