@@ -6,7 +6,8 @@
 	url = https://github.com/Mi-Thorium/vendor_qcom_opensource_wlan_prima
 [submodule "kernel_techpack_xiaomi-titanium"]
 	path = techpack/xiaomi-titanium
-	url = https://github.com/imren0x/kernel_techpack_xiaomi-titanium
+	url = https://github.com/lightsummer233/kernel_techpack_xiaomi-titanium.git
+	branch = legacy
 [submodule "kernel_techpack_audio-legacy"]
 	path = techpack/audio-legacy
 	url = https://github.com/lightsummer233/kernel_techpack_audio-legacy
