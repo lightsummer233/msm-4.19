@@ -1,3 +1,29 @@
+&vfe0 {
+	max-clk-nominal = <540000000>;
+	max-clk-turbo = <540000000>;
+};
+
+&vfe1 {
+	max-clk-nominal = <540000000>;
+	max-clk-turbo = <540000000>;
+};
+
+&i2c_freq_100Khz {
+	qcom,cci-clk-src = <37500000>;
+};
+
+&i2c_freq_400Khz {
+	qcom,cci-clk-src = <37500000>;
+};
+
+&i2c_freq_custom {
+	qcom,cci-clk-src = <37500000>;
+};
+
+&i2c_freq_1Mhz {
+	qcom,cci-clk-src = <37500000>;
+};
+
 &soc {
 	/delete-node/ qcom,camera-flash;
 	led_flash0: qcom,camera-flash@0 {
